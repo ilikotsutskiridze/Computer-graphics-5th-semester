@@ -1,0 +1,23 @@
+<HTML>
+	<BODY>
+		<h1>Домашнее задание №1</h1>
+		<canvas id="dz01" width="500" height="340"/>
+		<script>
+			canvas=document.getElementById("dz01");
+			context=canvas.getContext("2d");
+			var position = 0;
+			setInterval(function(){
+				context.clearRect(0, 0, canvas.width, canvas.height);
+				context.fillStyle="#7"+position+"3";
+				for (var k=1; k<4; k++){
+					for (var i=1; i<101; i++){
+						for (var j=position; j<96+position; j++){
+							context.fillRect(25+(i+j), 20 + 10*(k-1) + i-k, 2, 4);
+						}
+					}
+				}
+				position++;
+			}, 50);
+		</script>
+	</BODY>
+<HTML>
