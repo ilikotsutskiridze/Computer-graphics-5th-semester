@@ -1,1 +1,122 @@
-___
+<!DOCTYPE html>
+	<body>
+		<canvas id="DZ2" width='2000' height='400' />		
+		<script>
+			var canvas = document.getElementById("DZ2");
+			var ctx = canvas.getContext("2d");
+			var img = new Image;
+			img.setAttribute('crossOrigin', 'Anonymous');
+			img.data
+			img.onload = function() {
+				ctx.drawImage(img, 0, 0);
+				var idata = ctx.getImageData(0, 0, 400, 400);		
+				var h = canvas.height;
+				var w = canvas.width / 5;
+						
+				var idata1 = ctx.createImageData(w, h);
+				var idata2 = ctx.createImageData(w, h);
+				var idata3 = ctx.createImageData(w, h);
+				var idata4 = ctx.createImageData(w, h);		
+				const weights_matrix = [[-2, -2, -2], [-2, 9, -2], [-2, -2, -2]];
+				let weights_sum = 0;
+				for (let i = 0; i < weights_matrix.length; i++) {
+					weights_sum = weights_matrix[i].reduce((a, b) => a + b, weights_sum);
+				}		
+				var pixels_column_count = 2;
+				var pixels_row_count = 2;
+				var gauss_size = 1;		
+				var sobel_x = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
+				var sobel_y = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
+				var sobel_size = 1;		
+					for (var i=0; i < h; i++) {
+						for (var j=0; j < w; j++) {
+							const arrR = [];
+							const arrG = [];
+							const arrB = [];
+							const arrS = [];	
+							let avgR = 0;
+							let avgG = 0;
+							let avgB = 0;
+							let avgS = 0;	
+							let gaussR = 0;
+							let gaussG = 0;
+							let gaussB = 0;
+							let gaussS = 0;
+							let sobelGx = 0;
+							let sobelGy = 0;
+							for (var k = 0; k < pixels_column_count; k++) {
+								for (var l = 0; l < pixels_row_count; l++) {
+									arrR.push(idata.data[((i + l) * w + j + k) * 4]);
+									arrG.push(idata.data[((i + l) * w + j + k) * 4 + 1]);
+									arrB.push(idata.data[((i + l) * w + j + k) * 4 + 2]);
+									arrS.push(idata.data[((i + l) * w + j + k) * 4 + 3]);
+									avgR += idata.data[((i + l) * w + j + k) * 4];
+									avgG += idata.data[((i + l) * w + j + k) * 4 + 1];
+									avgB += idata.data[((i + l) * w + j + k) * 4 + 2];
+									avgS += idata.data[((i + l) * w + j + k) * 4 + 3];
+								}
+							}
+								
+							for (var k = -gauss_size; k <= gauss_size; k++) {
+								for (var l = -gauss_size; l <= gauss_size; l++) {
+									gaussR += idata.data[((j + l) * w + i + k) * 4] * weights_matrix[l + gauss_size][k + gauss_size];
+									gaussG += idata.data[((j + l) * w + i + k) * 4 + 1] * weights_matrix[l + gauss_size][k + gauss_size];
+									gaussB += idata.data[((j + l) * w + i + k) * 4 + 2] * weights_matrix[l + gauss_size][k + gauss_size];
+									gaussS += idata.data[((j + l) * w + i + k) * 4 + 3] * weights_matrix[l + gauss_size][k + gauss_size];
+								}
+							}
+							for (var k = -sobel_size; k <= sobel_size; k++) {
+								for (var l = -sobel_size; l <= sobel_size; l++) {
+									sobelGx += idata.data[((j + l) * w + i + k) * 4] * sobel_x[l + sobel_size][k + sobel_size];
+									sobelGx += idata.data[((j + l) * w + i + k) * 4 + 1] * sobel_x[l + sobel_size][k + sobel_size];
+									sobelGx += idata.data[((j + l) * w + i + k) * 4 + 2] * sobel_x[l + sobel_size][k + sobel_size];	
+									sobelGy += idata.data[((j + l) * w + i + k) * 4] * sobel_y[l + sobel_size][k + sobel_size];
+									sobelGy += idata.data[((j + l) * w + i + k) * 4 + 1] * sobel_y[l + sobel_size][k + sobel_size];
+									sobelGy += idata.data[((j + l) * w + i + k) * 4 + 2] * sobel_y[l + sobel_size][k + sobel_size];
+								}
+							}
+							arrR.sort();
+							arrG.sort();
+							arrB.sort();
+							arrS.sort();
+							var mid = Math.floor(arrR.length / 2);
+							avgR /= (pixels_column_count - 1) + pixels_row_count;
+							avgG /= (pixels_column_count - 1) + pixels_row_count;
+							avgB /= (pixels_column_count - 1) + pixels_row_count;
+							avgS /= (pixels_column_count - 1) + pixels_row_count;
+							gaussR /= weights_sum;
+							gaussG /= weights_sum;
+							gaussB /= weights_sum;
+							gaussS /= weights_sum;
+							sobelG = Math.ceil(Math.sqrt(Math.pow(sobelGx, 2) + Math.pow(sobelGy, 2)));
+							for (var k = 0; k < pixels_column_count; k++) {
+								for (var l = 0;  l < pixels_row_count; l++) {
+									idata1.data[((i + l) * w + j + k) * 4] = arrR[mid];
+									idata1.data[((i + l) * w + j + k) * 4 + 1] = arrG[mid];
+									idata1.data[((i + l) * w + j + k) * 4 + 2] = arrB[mid];
+									idata1.data[((i + l) * w + j + k) * 4 + 3] = arrS[mid];		
+									idata2.data[((i + l) * w + j + k) * 4] = avgR;
+									idata2.data[((i + l) * w + j + k) * 4 + 1] = avgG;
+									idata2.data[((i + l) * w + j + k) * 4 + 2] = avgB;
+									idata2.data[((i + l) * w + j + k) * 4 + 3] = avgS;
+								}
+							}								
+							idata3.data[(j * w + i) * 4] = gaussR;
+							idata3.data[(j * w + i) * 4 + 1] = gaussG;
+							idata3.data[(j * w + i) * 4 + 2] = gaussB;
+							idata3.data[(j * w + i) * 4 + 3] = gaussS;				
+							idata4.data[(j * w + i) * 4] = sobelG;
+							idata4.data[(j * w + i) * 4 + 1] = sobelG;
+							idata4.data[(j * w + i) * 4 + 2] = sobelG;
+							idata4.data[(j * w + i) * 4 + 3] = 255;
+						}
+					}
+					ctx.putImageData(idata1, 400, 0);
+					ctx.putImageData(idata2, 800, 0);
+						ctx.putImageData(idata3, 1200, 0);
+						ctx.putImageData(idata4, 1600, 0);
+				};
+			img.src = "https://avatars.githubusercontent.com/u/11995736?v=4";
+		</script>
+	</body>
+</html>
