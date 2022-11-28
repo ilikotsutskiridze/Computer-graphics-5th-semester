@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+	<body>
+		<canvas id='DZ3' width='500' height='500', style="background: #008080" />
+		<script>
+			var canvas = document.getElementById('DZ3');
+			var ctx = canvas.getContext('2d');
+			ctx.fillStyle = "black";
+			var x0 = 250;
+			var y0 = 250;
+			var r = 240;
+			var angle = 270;
+			function DrawL(x0, y0, x1, y1) {
+				var IN = Math.abs(x1 - x0) < Math.abs(y1 - y0);
+				if (IN) {
+					[x0, y0] = [y0, x0];
+					[x1, y1] = [y1, x1];
+				}
+				if (x0 > x1) {
+					[x0, x1] = [x1, x0];
+					[y0, y1] = [y1, y0];
+				}
+				var dx = x1 - x0;
+				var dy = Math.abs(y1 - y0);
+				var e = dx / 2;
+				var y = y0;
+				var y_shift = 1;
+				if (y0 >= y1) {
+					y_shift = -1;
+				}
+				for (var x = x0; x <= x1; ++x) {
+					if (IN) {
+						ctx.fillRect(y, x, 1, 1);
+					} else {
+						ctx.fillRect(x, y, 1, 1);
+					}
+					e -= dy;
+					if (e < 0) {
+						e += dx;
+						y += y_shift;
+					}
+				}
+			}
+			setInterval( function () {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				angle += 1;
+				if (angle == 360) {
+					angle = 0;
+				}
+				var x1 = r * Math.cos(angle / 180 * 3.14) + x0;
+				var y1 = r * Math.sin(angle / 180 * 3.14) + y0;
+				DrawL(Math.floor(x0), Math.floor(y0), Math.floor(x1), Math.floor(y1));
+				}, 167);
+		</script>
+	</body>
+</html>
