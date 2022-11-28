@@ -1,1 +1,63 @@
+<!DOCTYPE html>
+<!--suppress CheckEmptyScriptTag -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <canvas id="canvas" width="1000" height="1000" style="background: black"/>
+    <script>
 
+        function f(x, y, R) {
+            return Math.pow(x, 2) + Math.pow(y, 2) - Math.pow(R, 2);
+        }
+
+        function dFs(x, y) {
+            return 4 * y + 6;
+        }
+
+        function dFd(x, y) {
+            return 4*y + 4*x + 10;
+        }
+
+        let canvas = document.getElementById("canvas");
+        let context = canvas.getContext("2d");
+
+        let R = 100;
+        let y = 0;
+        let x = -R;
+        let F = 1 - 2 * R;
+        while (y <= Math.abs(x)) {
+            console.log({x, y, F});
+            context.fillStyle = "#DC143C";
+            context.fillRect(x + 500, y + 500, 3, 3);
+            context.fillStyle = "#FF0000";
+            context.fillRect(x + 500, -y + 500, 3, 3);
+            context.fillStyle = "#B22222";
+            context.fillRect(-x + 500, y + 500, 3, 3);
+            context.fillStyle = "#8B0000";
+            context.fillRect(-y + 500, -x + 500, 3, 3);
+            context.fillStyle = "#CD5C5C";
+            context.fillRect(y + 500, x + 500, 3, 3);
+            context.fillStyle = "#C71585";
+            context.fillRect(-x + 500, -y + 500, 3, 3);
+            context.fillStyle = "#FF4500";
+            context.fillRect(-y + 500, x + 500, 3, 3);
+            context.fillStyle = "#FFA07A";
+            context.fillRect(y + 500, -x + 500, 3, 3);
+            
+            if (F < 0) {
+                F += dFs(x, y)
+                y++;
+            } 
+	else {
+                F += dFd(x, y);
+                x++;
+                y++;
+            }
+        }
+       
+    </script>
+</body>
+</html>
