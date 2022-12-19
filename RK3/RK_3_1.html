@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RK_3_1</title>
+</head>
+<body>
+<canvas id="RK_3_1" width="50" height="50"></canvas>
+<input type="button" onClick="Solve()" value="Выполнить!">
+
+<script>
+    class P {
+        constructor(x = 0, y = 0, z = 0) {
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+        }
+
+        floor() {
+            return new P(Math.floor(this.X), Math.floor(this.Y), Math.floor(this.Z));
+        }
+
+        sub(other) {
+            return new P(this.X - other.X, this.Y - other.Y, this.Z - other.Z);
+        }
+
+        length() {
+            return Math.sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z);
+        }
+
+        is_equal(other) {
+            return this.X === other.X && this.Y === other.Y && this.Z === other.Z;
+        }
+    }
+</script>
+
+<script>
+    // Task 1
+
+    function toRadians(angle) {
+        return angle * (Math.PI / 180);
+    }
+
+    function MultiplyMatrix(A, B) {
+        let n = A.length;
+        let m = A[0].length;
+        let p = B[0].length;
+
+        if (m !== B.length) {
+            throw new Error();
+        }
+
+        let result = Array(n).fill().map(() => Array(p).fill(0))
+
+        for (let i = 0; i < n; ++i) {
+            for (let j = 0; j < p; ++j) {
+                for (let k = 0; k < m; ++k) {
+                    result[i][j] += A[i][k] * B[k][j];
+                }
+            }
+        }
+
+        return result;
+    }
+
+    function Rotate(x, y, alpha) {
+        let point_matrix = [
+            [1, 0, x],
+            [0, 1, y],
+            [0, 0, 1]
+        ];
+
+        console.log('Mxy: ', point_matrix)
+
+        let negative_point_matrix = [
+            [1, 0, -x],
+            [0, 1, -y],
+            [0, 0, 1]
+        ];
+
+        console.log('M-x-y: ', negative_point_matrix)
+
+        let R_matrix = [
+            [Math.sin(alpha), -Math.cos(alpha), 0],
+            [Math.cos(alpha), Math.sin(alpha), 0],
+            [0, 0, 1]
+        ];
+
+        console.log('Rxy: ', R_matrix)
+
+        return MultiplyMatrix(MultiplyMatrix(point_matrix, R_matrix), negative_point_matrix)
+    }
+
+</script>
+
+<script>
+    // Task 2
+
+    function GetNormal(xa, ya, za, xb, yb, zb, xc, yc, zc) {
+
+    }
+
+</script>
+
+<script>
+    // Task 3
+
+</script>
+
+<script>
+    let canvas = document.getElementById('RK_3');
+    let context = canvas.getContext('2d');
+
+    function Solve() {
+        let x = 16
+        let y = 16
+        let alpha = 16
+
+        let task_1 = Rotate(x, y, toRadians(alpha))
+        console.log('Матрица вращения для точки (', x, ',', y, '):')
+        console.log(task_1)
+
+        let xa = 1
+        let ya = 1
+        let za = 1
+
+        let xb = 1
+        let yb = 1
+        let zb = 1
+
+        let xc = 1
+        let yc = 1
+        let zc = 1
+
+        let A = P(xa, ya, za)
+        let B = P(xb, yb, zb)
+        let C = P(xc, yc, zc)
+
+
+    }
+
+</script>
+
+</body>
+</html>
