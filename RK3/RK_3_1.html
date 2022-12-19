@@ -2,37 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>RK_3_1</title>
+    <title>RK_3</title>
 </head>
 <body>
-<canvas id="RK_3_1" width="50" height="50"></canvas>
+<canvas id="RK_3" width="50" height="50"></canvas>
 <input type="button" onClick="Solve()" value="Выполнить!">
-
-<script>
-    class P {
-        constructor(x = 0, y = 0, z = 0) {
-            this.X = x;
-            this.Y = y;
-            this.Z = z;
-        }
-
-        floor() {
-            return new P(Math.floor(this.X), Math.floor(this.Y), Math.floor(this.Z));
-        }
-
-        sub(other) {
-            return new P(this.X - other.X, this.Y - other.Y, this.Z - other.Z);
-        }
-
-        length() {
-            return Math.sqrt(this.X * this.X + this.Y * this.Y + this.Z * this.Z);
-        }
-
-        is_equal(other) {
-            return this.X === other.X && this.Y === other.Y && this.Z === other.Z;
-        }
-    }
-</script>
 
 <script>
     // Task 1
@@ -105,6 +79,25 @@
 <script>
     // Task 3
 
+    function CheckBelonging(xa, ya, za, xb, yb, zb, xc, yc, zc, x, y) {
+        let c1 = (xa - x) * (yb - ya) - (xb - xa) * (ya - y)
+        let c2 = (xb - x) * (yc - yb) - (xc - xb) * (yb - y)
+        let c3 = (xc - x) * (ya - yc) - (xa - xc) * (yc - y)
+
+        console.log(c1)
+        console.log(c2)
+        console.log(c3)
+
+        if (c1 > 0 && c2 > 0 && c3 > 0) {
+            console.log('Точка (15, 25) принадлежит полоскости xOy.')
+        } else if (c1 < 0 && c2 < 0 && c3 <0) {
+            console.log('Точка (15, 25) принадлежит полоскости xOy.')
+        } else {
+            console.log('Уравнения отличаются знаком, значит точка (15, 25) не принадлежит полоскости xOy.')
+        }
+
+    }
+
 </script>
 
 <script>
@@ -112,31 +105,31 @@
     let context = canvas.getContext('2d');
 
     function Solve() {
-        let x = 16
-        let y = 16
-        let alpha = 16
+        let x = 16;
+        let y = 16;
+        let alpha = 16;
+        console.log('Задание 1:')
+        let task_1 = Rotate(x, y, toRadians(alpha));
+        console.log('Матрица вращения для точки (', x, ',', y, '):');
+        console.log(task_1);
 
-        let task_1 = Rotate(x, y, toRadians(alpha))
-        console.log('Матрица вращения для точки (', x, ',', y, '):')
-        console.log(task_1)
+        let xa = 9;
+        let ya = 10;
+        let za = 1;
 
-        let xa = 1
-        let ya = 1
-        let za = 1
+        let xb = 10;
+        let yb = 9;
+        let zb = 1;
 
-        let xb = 1
-        let yb = 1
-        let zb = 1
+        let xc = 30;
+        let yc = 30;
+        let zc = 1;
 
-        let xc = 1
-        let yc = 1
-        let zc = 1
+        let X = 15;
+        let Y = 25;
 
-        let A = P(xa, ya, za)
-        let B = P(xb, yb, zb)
-        let C = P(xc, yc, zc)
-
-
+        console.log('Задание 3:')
+        CheckBelonging(xa, ya, za, xb, yb, zb, xc, yc, zc, X, Y)
     }
 
 </script>
