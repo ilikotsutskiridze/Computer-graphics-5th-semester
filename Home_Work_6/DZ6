@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+	<body>
+		<canvas id='DZ6' width='10000' height='10000' style="border:2px solid"/>
+		<script>
+			var canvas = document.getElementById('DZ6');
+			var ctx = canvas.getContext('2d');
+			
+			function DrawLine(x0, y0, x1, y1) 
+			{
+				var inv = Math.abs(x1 - x0) < Math.abs(y1 - y0);
+				if (inv) 
+				{
+					[x0, y0] = [y0, x0];
+					[x1, y1] = [y1, x1];
+				}
+				if (x0 > x1) 
+				{
+					[x0, x1] = [x1, x0];
+					[y0, y1] = [y1, y0];
+				}
+				var dx = x1 - x0;
+				var dy = Math.abs(y1 - y0);
+				var e = dx / 2;
+				var y = y0;
+				var y_shift = 1;
+				
+				if (y0 >= y1) 
+				{
+					y_shift = -1;
+				}
+				
+				for (var x = x0; x <= x1; ++x) 
+				{
+					if (inv) 
+					{
+						ctx.fillRect(y, x, 1, 1);
+					} 
+					else 
+					{
+						ctx.fillRect(x, y, 1, 1);
+					}
+					
+					e -= dy;
+					
+					if (e < 0) 
+					{
+						y += y_shift;
+						e += dx;
+					}
+				}
+			}
+			
+			let global_x0 = -1;
+			let global_y0 = -1;
+
+			let x0 = -1;
+			let y0 = -1;
+
+			let draw_figure = true;
+			
+			let x_coords = [];
+			let y_coords = [];
+			
+			function CiriusBlack(x0, y0, x1, y1) 
+			{
+				var t = 0;
+				var ax = 0;
+				var ay = 0;
+				var bx = 0;
+				var by = 0;
+				var ex0 = 0;
+				var ey0 = 0;
+				
+				for (var i = 1; i <= x_coords.length; i++) 
+				{
+					ax = x_coords[i - 1];
+					ay = y_coords[i - 1];
+					
+					if (i == x_coords.length) 
+					{
+						bx = x_coords[0];
+						by = y_coords[0];
+					} 
+					else 
+					{
+						bx = x_coords[i];
+						by = y_coords[i];
+					}
+					
+					t = ((y0 - y1) * (ax - x0) + (x1 - x0) * (ay - y0)) / ((bx - ax) * (y1 - y0) + (by - ay) * (x0 - x1));
+					
+					console.log(i, ax, bx, ay, by, t);
+					
+					if (t <= 1 && t >= 0) 
+					{
+						var ex = (bx-ax)*t+ax;
+						var ey = (by-ay)*t+ay;
+						if (ex0 == 0 && ey0 == 0) 
+						{
+							ex0 = ex;
+							ey0 = ey;
+						} 
+						else 
+						{
+							DrawLine(ex0, ey0, ex, ey);
+							ex0 = 0;
+							ey0 = 0;
+						}
+						
+					}
+				}
+			}
+			
+			document.addEventListener("click", function(event) 
+			{
+				if ( event.button == 0 ) 
+				{
+					if (draw_figure) 
+					{
+						x_coords.push(event.offsetX);
+						y_coords.push(event.offsetY);
+						
+						if (x0 == -1 && y0 == -1) 
+						{
+							x0 = event.offsetX;
+							y0 = event.offsetY;
+							
+							global_x0 = x0;
+							global_y0 = y0;
+						} 
+						else 
+						{
+							DrawLine(x0, y0, event.offsetX, event.offsetY);
+							x0 = event.offsetX;
+							y0 = event.offsetY;
+						}
+					} 
+					else 
+					{
+						if (x0 == -1 && y0 == -1) 
+					{
+							x0 = event.offsetX;
+							y0 = event.offsetY;
+						} 
+						else 
+						{
+							CiriusBlack(x0, y0, event.offsetX, event.offsetY);
+							x0 = -1;
+							y0 = -1;
+						}
+					}
+				}
+			});
+			
+			document.addEventListener("keydown", function(event) 
+			{
+				if (event.code == "Space") 
+				{
+					console.log(x_coords);
+					console.log(y_coords);
+					if (draw_figure && global_x0 != -1 && global_y0 != -1) 
+					{
+						DrawLine(global_x0, global_y0, x0, y0);
+						x0 = -1;
+						y0 = -1;
+						draw_figure = false;
+					}
+				}
+			});
+
+		</script>
+	</body>
+</html>
